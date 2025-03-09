@@ -61,7 +61,7 @@ function showTranslation(translation, originalText) {
   popup.style.maxWidth = "300px"; // Limit width
 
   const translatedParagraph = document.createElement("p");
-  translatedParagraph.textContent = `Translation: ${translation}`;
+  translatedParagraph.textContent = `${translation}`;
 
   popup.appendChild(translatedParagraph);
 
