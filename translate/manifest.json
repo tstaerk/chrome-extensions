@@ -1,0 +1,15 @@
+// manifest.json
+{
+  "manifest_version": 3,
+  "name": "Translate Selection to German",
+  "version": "1.0",
+  "description": "Translates selected text to German.",
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
