@@ -2,7 +2,7 @@
 {
   "manifest_version": 3,
   "name": "Translate Selection to German",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Translates selected text to German.",
   "permissions": [
     "contextMenus",
@@ -11,5 +11,20 @@
   ],
   "background": {
     "service_worker": "background.js"
+  },
+  "icons": {
+  "16":  "german_flag_16.png",
+  "32":  "german_flag_32.png",
+  "48":  "german_flag_48.png",
+  "128": "german_flag_128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "german_flag_16.png",
+      "32": "german_flag_32.png",
+      "48": "german_flag_48.png",
+      "128": "german_flag_128.png"
+    },
+    "default_title": "Translate Selection to German Chrome Extension"
   }
 }
