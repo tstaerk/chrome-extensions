@@ -60,14 +60,9 @@ function showTranslation(translation, originalText) {
   popup.style.fontFamily = "sans-serif";
   popup.style.maxWidth = "300px"; // Limit width
 
-  const originalParagraph = document.createElement('p');
-  originalParagraph.textContent = `Original: ${originalText}`;
-  originalParagraph.style.marginBottom = '5px';
-
   const translatedParagraph = document.createElement("p");
   translatedParagraph.textContent = `Translation: ${translation}`;
 
-  popup.appendChild(originalParagraph);
   popup.appendChild(translatedParagraph);
 
   document.body.appendChild(popup);
