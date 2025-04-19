@@ -6,6 +6,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>
     const img = new Image();
     img.crossOrigin = "anonymous";
 
+    img.onerror = () =>
+    {
+      alert("⚠️ Failed to load image. It might be blocked by CORS.");
+    };
+
     img.onload = () =>
     {
       const originalWidth  = img.width;
