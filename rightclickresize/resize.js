@@ -1,5 +1,10 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>
+if (!window.hasRightClickResizeListener)
 {
+
+  window.hasRightClickResizeListener=true;
+
+ chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>
+ {
   if (message.type === "resize-image")
   {
     const imageUrl = message.imageUrl;
@@ -79,4 +84,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>
 
     img.src = imageUrl;
   }
-});
+ });
+}
