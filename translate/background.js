@@ -58,13 +58,27 @@ function showTranslationPopup(translation) {
   const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
   if (!range) return;
 
-  const rect = range.getBoundingClientRect();
+  let top = 0;
+  let left = 0;
+  if (range) {
+    const rect = range.getBoundingClientRect();
+
+    if (rect.width > 0 || rect.height > 0) {
+      // Normal case
+      top = rect.bottom + window.scrollY;
+      left = rect.left + window.scrollX;
+    } else {
+      // Fallback fallback — still use same rect values
+      top = rect.bottom + window.scrollY;
+      left = rect.left + window.scrollX;
+    }
+  }
 
   const popup = document.createElement("div");
   popup.className = "translation-popup";
   popup.style.position = "absolute";
-  popup.style.top = rect.bottom + window.scrollY + "px";
-  popup.style.left = rect.left + window.scrollX + "px";
+  popup.style.top = `${top}px`;
+  popup.style.left = `${left}px`;
   popup.style.backgroundColor = "white";
   popup.style.border = "1px solid #ccc";
   popup.style.padding = "10px 16px";
