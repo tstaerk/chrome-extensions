@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Right (click) Resizer",
+  "version": "1.1",
+  "permissions":
+  [
+    "contextMenus",
+    "downloads",
+    "scripting"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background":
+  {
+    "service_worker": "background.js"
+  },
+  "action": { "default_title": "Right (click) Resizer" },
+  "icons":
+  {
+    "16":  "icon16.png",
+    "32":  "icon32.png",
+    "48":  "icon48.png",
+    "128": "icon128.png"
+  }
+}
