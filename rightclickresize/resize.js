@@ -22,6 +22,8 @@ if (!window.hasRightClickResizeListener)
       const originalHeight = img.height;
 
       const input = prompt(
+        `This is your friendly Right(Click)Resize Chrome Extension to resize and download images. ` +
+        `For feedback, latest version and more info, go to \nhttps://github.com/tstaerk/chrome-extensions\n\n` +
         `Original size: ${originalWidth} x ${originalHeight}\n` +
         `Enter target size (e.g., 100% or 1920x1080):`,
         "100%"
