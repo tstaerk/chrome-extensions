@@ -4,25 +4,30 @@
   "version": "1.0",
   "description": "Translates selected text to German using your own API",
   "permissions": ["contextMenus", "scripting", "activeTab"],
-  "host_permissions": [
+  "host_permissions":
+  [
     "https://translate-api-thorsten.replit.app/*"
   ],
-  "background": {
+  "background":
+  {
     "service_worker": "background.js"
   },
-  "action": {
+  "action":
+  {
     "default_title": "Translate to German",
-      "default_icon": {
+      "default_icon":
+    {
     "16": "icon.png",
     "32": "icon.png",
     "48": "icon.png",
     "128": "icon.png"
-  }
-},
-"icons": {
+    }
+  },
+  "icons":
+  {
   "16": "icon.png",
   "32": "icon.png",
   "48": "icon.png",
   "128": "icon.png"
-}
   }
+}
