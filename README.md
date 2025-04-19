@@ -22,7 +22,9 @@ Right(click)Resizer is a lightweight Chrome extension that helps you resize imag
 Simply right-click on an image, enter your desired dimensions (or percentage), and download it instantly.
 
 ✅ Save disk space by avoiding oversized image files
+
 ✅ Get exactly the resolution you need for presentations, social media, or web uploads
+
 ✅ No data collected, no remote servers — everything runs locally in your browser
 
 Whether you need a 50% version or an exact 1920×1080 image — just right-click and go.
