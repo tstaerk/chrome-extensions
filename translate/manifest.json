@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Translate to German",
   "version": "1.0",
-  "description": "Translates selected text to German using your own API",
+  "description": "Translates selected text from any language to German, even in YouTube Search.",
   "permissions": ["contextMenus", "scripting", "activeTab"],
   "host_permissions":
   [
