@@ -13,6 +13,9 @@ This is a Chrome Extension that allows you to select text and translate it to Ge
 
 
 ## Install it like this:
+* find it in Google Chrome WebStore: https://chromewebstore.google.com/detail/translate-to-german/ceambffldhjdbcmmglljhkkdfbjkpakg
+
+For the latest developer goodness:  
 * download the translate folder to your local computer
 * in Chrome, go to chrome://extensions -> activate developer mode -> Load unpacked -> select your folder
 * done! Select any english text, right-click onto it and you will find a menu item "translate to German"
