@@ -11,52 +11,66 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== "translateToGerman") return;
 
-  // Step 1: Inject script to get innerText of whatever's under the click
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: () => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim()) {
-        return selection.toString();
-      }
+  // 1) figure out what text to translate
+  let textToTranslate = info.selectionText?.trim() || "";
 
-      // If nothing selected, try to find the element under the context menu click
-      const clickedElem = document.activeElement;
-      return clickedElem ? clickedElem.innerText || clickedElem.alt || "No text found" : "No text found";
-    }
-  }, async ([injectionResult]) => {
-    const selectedText = injectionResult?.result || "No text";
-
-    // Step 2: Show loading popup
-    chrome.scripting.executeScript({
+  if (!textToTranslate) {
+    // no selection → inject small script to grab the element at our last right-click
+    const [res] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      func: showTranslationPopup,
-      args: ["Translating… 🇩🇪"]
+      func: () => {
+        // first try any selection just in case
+        const sel = window.getSelection();
+        if (sel && sel.toString().trim()) {
+          return sel.toString();
+        }
+        // else use the coords stamped by content.js
+        const coords = window._lastContextMenuCoords || { x: 0, y: 0 };
+        const el = document.elementFromPoint(coords.x, coords.y);
+        return el ? (el.innerText || el.alt || "") : "";
+      }
     });
+    textToTranslate = (res.result || "").trim();
+  }
 
-    // Step 3: Translate
-    const response = await fetch("https://translate-api-thorsten.replit.app/translate", {
+  if (!textToTranslate) {
+    // nothing to translate
+    return;
+  }
+
+  // 2) show loading popup
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: showTranslationPopup,
+    args: ["Translating… 🇩🇪"]
+  });
+
+  // 3) call your API
+  let translated = "Fehler beim Übersetzen";
+  try {
+    const resp = await fetch("https://translate-api-thorsten.replit.app/translate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: selectedText })
+      body: JSON.stringify({ text: textToTranslate })
     });
+    const { translation } = await resp.json();
+    translated = translation || translated;
+  } catch (e) {
+    console.error("Translation API error", e);
+  }
 
-    const result = await response.json();
-
-    // Step 4: Show translation
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: showTranslationPopup,
-      args: [result.translation]
-    });
+  // 4) update popup with real result
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: showTranslationPopup,
+    args: [translated]
   });
 });
 
 function showTranslationPopup(translation) {
-  // Try to reuse existing popup
-  let popup = document.querySelector('.translation-popup');
+  // reuse or create a single popup
+  let popup = document.querySelector(".translation-popup");
   if (!popup) {
-    // First time: create it
     popup = document.createElement("div");
     popup.className = "translation-popup";
     Object.assign(popup.style, {
@@ -65,38 +79,46 @@ function showTranslationPopup(translation) {
       border: "1px solid #ccc",
       padding: "10px 16px",
       zIndex: "10000",
-      boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
+      boxShadow: "2px 2px 5px rgba(0,0,0,0.3)",
       borderRadius: "6px",
       fontFamily: "sans-serif",
       fontSize: "14px",
       maxWidth: "300px",
       lineHeight: "1.5",
       color: "#222",
-      pointerEvents: "auto"  // ensure we can click outside
+      pointerEvents: "auto"
     });
     document.body.appendChild(popup);
 
-    // Close on outside click
-    const outsideClickHandler = (e) => {
+    // dismiss when clicking outside
+    const handler = e => {
       if (!popup.contains(e.target)) {
         popup.remove();
-        window.removeEventListener('click', outsideClickHandler);
+        window.removeEventListener("click", handler);
       }
     };
-    setTimeout(() => window.addEventListener('click', outsideClickHandler), 0);
+    setTimeout(() => window.addEventListener("click", handler), 0);
   }
 
-  // Update text
+  // set the text
   popup.textContent = translation;
 
-  // Position it
-  const selection = window.getSelection();
-  if (!selection.rangeCount) return;
-  const rect = selection.getRangeAt(0).getBoundingClientRect();
-  const top = rect.bottom + window.scrollY;
-  const left = rect.left + window.scrollX;
+  // position: use coords if available, else selection rect
+  const coords = window._lastContextMenuCoords;
+  let top, left;
+  if (coords) {
+    top  = coords.y + window.scrollY;
+    left = coords.x + window.scrollX;
+  } else {
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    const rect = sel.getRangeAt(0).getBoundingClientRect();
+    top  = rect.bottom + window.scrollY;
+    left = rect.left   + window.scrollX;
+  }
+
   Object.assign(popup.style, {
-    top: `${top}px`,
+    top:  `${top}px`,
     left: `${left}px`
   });
 }

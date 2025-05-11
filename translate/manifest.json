@@ -8,6 +8,13 @@
   [
     "https://translate-api-thorsten.replit.app/*"
   ],
+  "content_scripts": [
+    {
+     "matches": ["<all_urls>"],
+     "js": ["content.js"],
+     "run_at": "document_start"
+    }
+  ],
   "background":
   {
     "service_worker": "background.js"
