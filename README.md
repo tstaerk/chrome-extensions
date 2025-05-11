@@ -8,8 +8,10 @@ This is a Chrome Extension that allows you to select text and translate it to Ge
 ## It looks like this:
 ![screenshot](https://github.com/user-attachments/assets/a213d13f-2566-4055-9c11-ba694f32963d)
 
-
-
+## Test cases
+* go to en.wikipedia.org/wiki/Test, mark some text, translate it
+* go to www.youtube.com, search for a video, right-click on a title, translate it
+* go to www.example.com, mark the text, translate it
 
 
 ## Install it like this:

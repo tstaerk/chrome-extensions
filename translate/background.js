@@ -1,3 +1,5 @@
+// background.js
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "translateToGerman",
@@ -51,61 +53,50 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 function showTranslationPopup(translation) {
-  // Remove any existing popups
-  document.querySelectorAll('.translation-popup').forEach(el => el.remove());
+  // Try to reuse existing popup
+  let popup = document.querySelector('.translation-popup');
+  if (!popup) {
+    // First time: create it
+    popup = document.createElement("div");
+    popup.className = "translation-popup";
+    Object.assign(popup.style, {
+      position: "absolute",
+      backgroundColor: "white",
+      border: "1px solid #ccc",
+      padding: "10px 16px",
+      zIndex: "10000",
+      boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
+      borderRadius: "6px",
+      fontFamily: "sans-serif",
+      fontSize: "14px",
+      maxWidth: "300px",
+      lineHeight: "1.5",
+      color: "#222",
+      pointerEvents: "auto"  // ensure we can click outside
+    });
+    document.body.appendChild(popup);
 
-  const selection = window.getSelection();
-  const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-  if (!range) return;
-
-  let top = 0;
-  let left = 0;
-  if (range) {
-    const rect = range.getBoundingClientRect();
-
-    if (rect.width > 0 || rect.height > 0) {
-      // Normal case
-      top = rect.bottom + window.scrollY;
-      left = rect.left + window.scrollX;
-    } else {
-      // Fallback fallback — still use same rect values
-      top = rect.bottom + window.scrollY;
-      left = rect.left + window.scrollX;
-    }
+    // Close on outside click
+    const outsideClickHandler = (e) => {
+      if (!popup.contains(e.target)) {
+        popup.remove();
+        window.removeEventListener('click', outsideClickHandler);
+      }
+    };
+    setTimeout(() => window.addEventListener('click', outsideClickHandler), 0);
   }
 
-  const popup = document.createElement("div");
-  popup.className = "translation-popup";
-  popup.style.position = "absolute";
-  popup.style.top = `${top}px`;
-  popup.style.left = `${left}px`;
-  popup.style.backgroundColor = "white";
-  popup.style.border = "1px solid #ccc";
-  popup.style.padding = "10px 16px";
-  popup.style.zIndex = "10000";
-  popup.style.boxShadow = "2px 2px 5px rgba(0, 0, 0, 0.3)";
-  popup.style.borderRadius = "6px";
-  popup.style.fontFamily = "sans-serif";
-  popup.style.fontSize = "14px";
-  popup.style.maxWidth = "300px";
-  popup.style.lineHeight = "1.5";
-  popup.style.color = "#222";
+  // Update text
+  popup.textContent = translation;
 
-  const content = document.createElement("div");
-  content.textContent = translation;
-  popup.appendChild(content);
-  document.body.appendChild(popup);
-
-  // Close popup when clicking outside
-  const outsideClickHandler = (event) => {
-    if (!popup.contains(event.target)) {
-      popup.remove();
-      document.removeEventListener('click', outsideClickHandler);
-    }
-  };
-
-  // Delay listener to avoid self-close
-  setTimeout(() => {
-    document.addEventListener('click', outsideClickHandler);
-  }, 0);
+  // Position it
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return;
+  const rect = selection.getRangeAt(0).getBoundingClientRect();
+  const top = rect.bottom + window.scrollY;
+  const left = rect.left + window.scrollX;
+  Object.assign(popup.style, {
+    top: `${top}px`,
+    left: `${left}px`
+  });
 }
